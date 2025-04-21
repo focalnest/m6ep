@@ -1,0 +1,14 @@
+{% extends 'tapasapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="col-md-8 offset-md-2 text-center">
+    <h2>Welcome, {{ account.username }}</h2>
+    <div class="mt-4 d-grid gap-2">
+        <a href="{% url 'manage_account' pk=account.pk %}" class="btn btn-secondary">Manage Account</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    </div>
+</div>
+
+{% endblock %}

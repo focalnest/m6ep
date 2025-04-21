@@ -1,0 +1,21 @@
+{% extends 'tapasapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="col-md-6 offset-md-3 text-center">
+    <h3 class="mb-4">Manage Account</h3>
+    <p><b>Username:</b> {{ account.username }}</p>
+    <div class="d-grid gap-2">
+        <a href="{% url 'change_password' pk=account.pk %}" class="btn btn-warning">Change Password</a>
+
+        <form method="post" action="{% url 'delete_account' pk=account.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-danger w-100" type="submit">Delete Account</button>
+        </form>
+
+        <a href="{% url 'basic_list' pk=account.pk %}" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
+
+{% endblock %}
