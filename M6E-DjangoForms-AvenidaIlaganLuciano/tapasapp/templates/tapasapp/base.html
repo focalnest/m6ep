@@ -14,29 +14,12 @@
     <body>
         <nav class="navbar navbar-dark bg-custom mb-3 sticky-top" style="background-color: #590404;">
             <div class="container-fluid">
-                {% if account %}
-                <a class="navbar-brand mb-0" href="{% url 'better_menu' pk=account.pk %}">My Tapas Menu</a>
-                {% else %}
                 <a class="navbar-brand mb-0" href="#">My Tapas Menu</a>
-                {% endif %}
-
-                {% if account %}
-                <a href="{% url 'add_menu' pk=account.pk %}" style="color:white">+</i></a>
-                {% else %}
-                <a class="navbar-brand mb-0" href="#" style="color:white">+</a>
-                {% endif %}
-
-                {% if account %}
-                <a href="{% url 'basic_list' pk=account.pk %}" style="color:white">View Account Details</i></a>
-                {% else %}
-                <a class="navbar-brand mb-0" href="#" style="color:white">View Account Details</a>
-                {% endif %}
-    
             </div>
 
         </nav>
 
-        <div class="container ">
+        <div class="container">
             <div class="row">
 
                 {% block content %}

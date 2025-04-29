@@ -1,16 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Dish 
-from .models import Account
+from .models import Dish, Account
 from django.contrib import messages
 
 
 # Create your views here.
 
 def home_view(request):
-    account_id = request.session.get('account_id')
-    if account_id:
+    account_pk = request.session.get('account_pk')
+    if account_pk:
         try:
-            account = Account.objects.get(pk=account_id)
+            account = Account.objects.get(pk=account_pk)
             return redirect('basic_list', pk=account.pk)
         except Account.DoesNotExist:
             pass
@@ -22,7 +21,7 @@ def login_view(request):
         password = request.POST['password'].strip()
         try:
             account = Account.objects.get(username=username, password=password)
-            request.session['account_id'] = account.pk 
+            request.session['account_pk'] = account.pk 
             return redirect('basic_list', pk=account.pk)
         except Account.DoesNotExist:
             messages.error(request, "That login is invalid!")
@@ -39,7 +38,7 @@ def signup_view(request):
             return render(request, 'tapasapp/signup.html')
         else:
             account = Account.objects.create(username=username, password=password)
-            request.session['account_id'] = account.pk 
+            request.session['account_pk'] = account.pk 
             messages.success(request, "Account created successfully!")
             return redirect('login')
     return render(request, 'tapasapp/signup.html')
@@ -64,54 +63,13 @@ def change_password_view(request, pk):
         current = request.POST['current']
         new1 = request.POST['new1']
         new2 = request.POST['new2']
-        if account.password == current:
-            if new1 == new2:
-                account.password = new1
-                account.save()
-                messages.success(request, "Password changed successfully!")
-                return redirect('manage_account', pk=pk)
-            else:
-                messages.error(request, "Passwords do not match!")
+        if account.password == current and new1 == new2:
+            account.password = new1
+            account.save()
+            return redirect('manage_account', pk=pk)
         else:
-            messages.error(request, "Password is incorrect!")
+            messages.error(request, "Your password is either incorrect or your new passwords don't match!")
     return render(request, 'tapasapp/change_password.html', {'account': account})
 
 def logout_view(request):
     return redirect('login')
-
-def better_menu(request, pk):
-    account = get_object_or_404(Account, pk=pk)
-    dish_objects = Dish.objects.all()
-    return render(request, 'tapasapp/better_list.html', {'dishes':dish_objects, 'account': account})
-
-def add_menu(request, pk):
-    account = get_object_or_404(Account, pk=pk)
-    if(request.method=="POST"):
-        dishname = request.POST.get('dname')
-        cooktime = request.POST.get('ctime')
-        preptime = request.POST.get('ptime')
-        Dish.objects.create(name=dishname, cook_time=cooktime, prep_time=preptime)
-        return redirect('better_menu', pk=pk)
-    else:
-        return render(request, 'tapasapp/add_menu.html', {'account': account, 'pk': pk})
-
-def view_detail(request, pk):
-    d = get_object_or_404(Dish, pk=pk)
-    return render(request, 'tapasapp/view_detail.html', {'d': d,'pk': pk})
-
-def delete_dish(request, pk):
-    account_id = request.session.get('account_id')
-    account = get_object_or_404(Account, pk=account_id)
-    Dish.objects.filter(pk=pk).delete()
-    return redirect('better_menu', pk=account.pk)
-
-
-def update_dish(request, pk):
-    if(request.method=="POST"):
-        cooktime = request.POST.get('ctime')
-        preptime = request.POST.get('ptime')
-        Dish.objects.filter(pk=pk).update(cook_time=cooktime, prep_time=preptime)
-        return redirect('view_detail', pk=pk)
-    else:
-        d = get_object_or_404(Dish, pk=pk)
-        return render(request, 'tapasapp/update_menu.html', {'d':d})
