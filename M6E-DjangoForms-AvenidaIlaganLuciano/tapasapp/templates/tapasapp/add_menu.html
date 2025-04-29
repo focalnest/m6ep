@@ -10,7 +10,7 @@
         </div>
         <div class="card-body">
 
-            <form method="POST" action="{% url 'add_menu' %}">{% csrf_token %}
+            <form method="POST" action="{% url 'add_menu' pk=account.pk %}">{% csrf_token %}
             
                 <div class="form-group">
                     <label for="name"> Name: </label>
@@ -21,14 +21,14 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label for="vintage"> Cook Time: </label>
-                            <input type="number" class="form-control w-50" id="ctime" name="ctime">
+                            <input type="number" class="form-control w-50" id="ctime" name="ctime" min="0" required>
                         </div>
         
                     </div>
                     <div class="col-6">
                         <div class="form-group">
                             <label for="price"> Prep Time: </label>
-                            <input type="number" class="form-control w-50" id="ptime" name="ptime">
+                            <input type="number" class="form-control w-50" id="ptime" name="ptime" min="0" required>
                         </div>
         
                     </div>

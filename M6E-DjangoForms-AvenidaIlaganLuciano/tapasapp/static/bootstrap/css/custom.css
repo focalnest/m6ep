@@ -3,3 +3,8 @@
     text-align: center;
     background-color: black;
 }
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-style: normal !important;
+}

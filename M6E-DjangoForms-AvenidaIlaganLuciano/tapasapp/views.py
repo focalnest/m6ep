@@ -41,7 +41,7 @@ def signup_view(request):
             account = Account.objects.create(username=username, password=password)
             request.session['account_id'] = account.pk 
             messages.success(request, "Account created successfully!")
-            return redirect('basic_list', pk=account.pk)
+            return redirect('login')
     return render(request, 'tapasapp/signup.html')
 
 def basic_list_view(request, pk):
@@ -79,27 +79,32 @@ def change_password_view(request, pk):
 def logout_view(request):
     return redirect('login')
 
-def better_menu(request):
+def better_menu(request, pk):
+    account = get_object_or_404(Account, pk=pk)
     dish_objects = Dish.objects.all()
-    return render(request, 'tapasapp/better_list.html', {'dishes':dish_objects})
+    return render(request, 'tapasapp/better_list.html', {'dishes':dish_objects, 'account': account})
 
-def add_menu(request):
+def add_menu(request, pk):
+    account = get_object_or_404(Account, pk=pk)
     if(request.method=="POST"):
         dishname = request.POST.get('dname')
         cooktime = request.POST.get('ctime')
         preptime = request.POST.get('ptime')
         Dish.objects.create(name=dishname, cook_time=cooktime, prep_time=preptime)
-        return redirect('better_menu')
+        return redirect('better_menu', pk=pk)
     else:
-        return render(request, 'tapasapp/add_menu.html')
+        return render(request, 'tapasapp/add_menu.html', {'account': account, 'pk': pk})
 
 def view_detail(request, pk):
     d = get_object_or_404(Dish, pk=pk)
-    return render(request, 'tapasapp/view_detail.html', {'d': d})
+    return render(request, 'tapasapp/view_detail.html', {'d': d,'pk': pk})
 
 def delete_dish(request, pk):
+    account_id = request.session.get('account_id')
+    account = get_object_or_404(Account, pk=account_id)
     Dish.objects.filter(pk=pk).delete()
-    return redirect('better_menu')
+    return redirect('better_menu', pk=account.pk)
+
 
 def update_dish(request, pk):
     if(request.method=="POST"):
